@@ -1,0 +1,43 @@
+﻿# ===== 高德地图 + 飞书 数据监测系统配置 =====
+
+# 门店列表（高德地图上的POI名称 + 城市）
+stores:
+  - name: "示例门店1"
+    city: "北京"
+    poi_id: ""  # 高德POI ID，留空则按名称搜索
+  # - name: "示例门店2"
+  #   city: "上海"
+
+# 高德地图配置
+amap:
+  # 高德Web服务API Key（需自行申请：https://lbs.amap.com/）
+  api_key: ""
+  # 抓取间隔（分钟）
+  interval_minutes: 120
+  # 抓取时间段
+  time_range:
+    start: "10:00"
+    end: "20:00"
+  # 请求间隔（秒），避免触发反爬
+  request_delay: 5
+
+# 飞书通知配置
+feishu:
+  # 飞书机器人Webhook URL
+  webhook_url: ""
+  # 消息签名校验（可选）
+  secret: ""
+  # @提醒的用户ID列表（飞书open_id），可选
+  at_users: []
+
+# 数据存储
+storage:
+  # 数据保存目录
+  data_dir: "./data"
+  # 保留天数
+  retention_days: 90
+
+# 日志
+logging:
+  level: "INFO"
+  file: "./logs/monitor.log"
