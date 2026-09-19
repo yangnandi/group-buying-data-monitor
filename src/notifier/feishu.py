@@ -1,4 +1,4 @@
-﻿"""飞书机器人推送模块"""
+"""飞书机器人推送模块"""
 import hashlib
 import hmac
 import json
@@ -158,6 +158,7 @@ class FeishuNotifier:
                 content=payload.encode("utf-8"),
                 headers=headers,
                 timeout=15,
+                trust_env=False,
             )
             result = resp.json()
 

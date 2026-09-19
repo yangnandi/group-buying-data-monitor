@@ -1,4 +1,4 @@
-﻿"""定时任务调度模块"""
+"""定时任务调度模块"""
 import sys
 import time
 from dataclasses import asdict
@@ -39,6 +39,11 @@ class MonitorScheduler:
 
         # 确保日志目录存在
         Path(log_file).parent.mkdir(parents=True, exist_ok=True)
+
+        # 修复：data_dir 取自 storage 配置，而前面只创建了日志目录；
+        # 首次部署时 data/ 不存在，抓取数据会因目录缺失而失败。
+        data_dir = self.config.get("storage", {}).get("data_dir", "./data")
+        Path(data_dir).mkdir(parents=True, exist_ok=True)
 
         logger.remove()
         logger.add(

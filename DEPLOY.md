@@ -1,4 +1,4 @@
-﻿# 部署文档 - 高德地图门店数据监测系统
+# 部署文档 - 高德地图门店数据监测系统
 
 ## 环境要求
 
@@ -111,3 +111,38 @@ sudo systemctl enable --now amap-monitor
 | 门店搜索不到 | 检查门店名称是否与高德地图一致 |
 | API 调用超限 | 高德免费版日调用量 5000 次，增大 `request_delay` |
 | 飞书推送失败 | 检查 Webhook URL 是否正确，签名密钥是否匹配 |
+
+## 8. 评论明细说明（重要）
+
+高德没有公开的评论 API。本项目评论数据的现状与限制：
+
+- `restapi.amap.com/v3/place/*`（官方 Web 服务 API）**只提供门店基础信息、
+  评分、总评论数**，不提供评论内容；
+- 移动端 `m.amap.com/detail/api/comment/list` 会对非浏览器请求返回
+  `text/html` 反爬页面（2026-09 实测），代码会识别该情况并记录 WARNING，
+  此时评论明细为空（总评论数、评分、新增数量不受影响，仍然准确）。
+
+需要拿到评论明细时，启用浏览器渲染（可选依赖）：
+
+```bash
+pip install playwright
+playwright install chromium
+# Windows PowerShell
+$env:AMAP_USE_BROWSER="1"
+# Linux/macOS
+export AMAP_USE_BROWSER=1
+```
+
+未安装 Playwright 或渲染失败时只记录错误日志，不影响主流程。
+
+## 9. 测试
+
+仓库自带测试套件（不依赖外网，使用本地桩服务模拟高德与飞书接口）：
+
+```bash
+python -m tests.run_tests
+```
+
+覆盖：详情接口回填总评论数/评分、缓存读写一致性、损坏缓存的降级与告警、
+反爬 HTML 的识别、飞书卡片内容、`data_dir` 自动创建、httpx 代理隔离。
+
