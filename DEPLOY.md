@@ -140,9 +140,19 @@ export AMAP_USE_BROWSER=1
 仓库自带测试套件（不依赖外网，使用本地桩服务模拟高德与飞书接口）：
 
 ```bash
-python -m tests.run_tests
+python -m tests.run_tests        # 单元测试 + 端到端集成测试
+python -m tests.run_tests unit   # 仅单元测试（22 项）
+python -m tests.run_tests e2e    # 仅端到端集成测试（22 项）
 ```
 
-覆盖：详情接口回填总评论数/评分、缓存读写一致性、损坏缓存的降级与告警、
-反爬 HTML 的识别、飞书卡片内容、`data_dir` 自动创建、httpx 代理隔离。
+覆盖：
+
+- 单元测试：详情接口回填总评论数/评分、缓存读写一致性、损坏缓存的降级与告警、
+  反爬 HTML 的识别、飞书卡片内容、`data_dir` 自动创建、httpx 代理隔离；
+- 端到端：搜索返回 poi_id 与"搜索无 id"两种场景下，连续两轮抓取的
+  「总评论数 / 新增评论数 / 缓存命中 / 飞书推送内容」全链路。
+
+端到端测试默认会强制本地 httpx 绕过系统代理（因为 127.0.0.1 的桩需要直连）；
+设 `SMOKE_NO_TRUSTENV_FIX=1` 可关闭该夹具，用于单独验证代码自身的
+`trust_env=False` 修复是否生效。
 
